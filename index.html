@@ -394,7 +394,7 @@
                  */ 
 
                  // Hiển thị trạng thái ban đầu
-                audio.volume = this.currentVolume;
+                audio.volume = parseFloor(this.currentVolume);
                 this.sliderAnimate(volumeRange);
                 repeatBtn.classList.toggle('active', this.isRepeat);
                 randomBtn.classList.toggle('active', this.isRandom);
