@@ -108,6 +108,7 @@
             isRandom: false,
             isRepeat: false,
             isSilent: false,
+            isTimeUpdate: true,
             currentVolume: 0.8,
             sliderEvent: [onchange, onmousemove],
             config: JSON.parse(localStorage.getItem(PLAYER_STORAGE_KEY)) || {},
@@ -251,8 +252,8 @@
                 }
                 
                 // Khi tiến độ bài hát thay đổi
-                audio.ontimeupdate = function() {
-                    if (audio.duration) {
+                audio.ontimeupdate = function(e) {
+                    if (audio.duration && _this.isTimeUpdate) {
                         const progressPercent = Math.floor(audio.currentTime / audio.duration * 100);
                         progress.value = progressPercent;
 
@@ -262,10 +263,13 @@
                 }
 
                 // Xử lý khi tua bài hát
-                progress.onchange = function(e) {
-                    const seekTime = audio.duration * e.target.value / 100;
+                progress.onchange= function(e) {
+                    _this.isTimeUpdate = false;
+                    const seekTime = audio.duration * Number(e.target.value) / 100;
                     audio.currentTime = seekTime;
                     _this.sliderAnimate(e.target);
+                    audio.play();
+                    _this.isTimeUpdate = true;
                 }
 
                 progress.onmousemove = function(e) {
@@ -347,8 +351,8 @@
                     } else {
                         _this.isSilent = false;
                         volumeBtn.classList.toggle('silent', _this.isSilent);
-                        _this.currentVolume = parseFloor(volumeValue);
-                        audio.volume = parseFloor(volumeValue);
+                        _this.currentVolume = volumeValue;
+                        audio.volume = volumeValue;
                     }
 
                     _this.sliderAnimate(e.target);
@@ -385,7 +389,7 @@
                 this.isRandom = this.config.isRandom;
                 this.isRepeat = this.config.isRepeat;
                 this.isSilent = this.config.isSilent;
-//                 this.currentVolume = this.config.currentVolume;
+                this.currentVolume = this.config.currentVolume;
 
                 /** Có thể xử dụng  như sau
                  *  Object.assign(this, this.config);
@@ -394,11 +398,11 @@
                  */ 
 
                  // Hiển thị trạng thái ban đầu
-//                 audio.volume = parseFloor(this.currentVolume);
-//                 this.sliderAnimate(volumeRange);
-//                 repeatBtn.classList.toggle('active', this.isRepeat);
-//                 randomBtn.classList.toggle('active', this.isRandom);
-//                 this.muteSong();
+                audio.volume = this.currentVolume;
+                this.sliderAnimate(volumeRange);
+                repeatBtn.classList.toggle('active', this.isRepeat);
+                randomBtn.classList.toggle('active', this.isRandom);
+                this.muteSong();
             },
             nextSong: function() {
                 this.currentIndex++;
