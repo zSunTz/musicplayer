@@ -446,9 +446,9 @@
             },
             loadConfig: function() {
                 this.currentIndex = this.config.currentIndex || this.currentIndex;
-                this.isRandom = this.config.isRandom;
-                this.isRepeat = this.config.isRepeat;
-                this.isSilent = this.config.isSilent;
+                this.isRandom = this.config.isRandom || this.isRandom;
+                this.isRepeat = this.config.isRepeat || this.isRepeat;
+                this.isSilent = this.config.isSilent || this.isSilent;
                 this.currentVolume = this.config.currentVolume || this.currentVolume;
 
                 /** Có thể xử dụng  như sau
