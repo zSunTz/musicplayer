@@ -389,7 +389,7 @@
                 this.isRandom = this.config.isRandom;
                 this.isRepeat = this.config.isRepeat;
                 this.isSilent = this.config.isSilent;
-                this.currentVolume = this.config.currentVolume;
+                this.currentVolume = this.config.currentVolume || this.currentVolume;
 
                 /** Có thể xử dụng  như sau
                  *  Object.assign(this, this.config);
