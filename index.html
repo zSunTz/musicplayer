@@ -396,13 +396,6 @@
                  * Tuy nhiên sau này sẽ có 1 số config chúng t không
                  * mong muốn lưu lại nên hạn chế dùng
                  */ 
-
-                 // Hiển thị trạng thái ban đầu
-                audio.volume = this.config.currentVolume;
-                this.sliderAnimate(volumeRange);
-                repeatBtn.classList.toggle('active', this.isRepeat);
-                randomBtn.classList.toggle('active', this.isRandom);
-                this.muteSong();
             },
             nextSong: function() {
                 this.currentIndex++;
@@ -457,6 +450,13 @@
 
                 // Render playlist
                 this.render();
+
+                // Hiển thị trạng thái ban đầu
+                audio.volume = this.config.currentVolume;
+                this.sliderAnimate(volumeRange);
+                repeatBtn.classList.toggle('active', this.isRepeat);
+                randomBtn.classList.toggle('active', this.isRandom);
+                this.muteSong();
             }
         };
 
