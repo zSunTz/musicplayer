@@ -107,7 +107,14 @@
     justify-content: center;
     background-color: var(--primary-color);
   }
-  
+
+  .song-time {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #666;
+  }
+
   input[type="range"] {
     -webkit-appearance: none;
     height: 6px;
@@ -177,7 +184,7 @@
   
   /* PLAYLIST */
   .playlist {
-    margin-top: 460px;
+    margin-top: 470px;
     padding: 12px;
   }
   
