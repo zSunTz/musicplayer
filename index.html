@@ -385,7 +385,7 @@
                 this.isRandom = this.config.isRandom;
                 this.isRepeat = this.config.isRepeat;
                 this.isSilent = this.config.isSilent;
-                this.currentVolume = this.config.currentVolume;
+//                 this.currentVolume = this.config.currentVolume;
 
                 /** Có thể xử dụng  như sau
                  *  Object.assign(this, this.config);
@@ -394,11 +394,11 @@
                  */ 
 
                  // Hiển thị trạng thái ban đầu
-                audio.volume = parseFloor(this.currentVolume);
-                this.sliderAnimate(volumeRange);
-                repeatBtn.classList.toggle('active', this.isRepeat);
-                randomBtn.classList.toggle('active', this.isRandom);
-                this.muteSong();
+//                 audio.volume = parseFloor(this.currentVolume);
+//                 this.sliderAnimate(volumeRange);
+//                 repeatBtn.classList.toggle('active', this.isRepeat);
+//                 randomBtn.classList.toggle('active', this.isRandom);
+//                 this.muteSong();
             },
             nextSong: function() {
                 this.currentIndex++;
