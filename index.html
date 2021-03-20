@@ -452,7 +452,7 @@
                 this.render();
 
                 // Hiển thị trạng thái ban đầu
-                audio.volume = this.config.currentVolume;
+                audio.volume = this.currentVolume;
                 this.sliderAnimate(volumeRange);
                 repeatBtn.classList.toggle('active', this.isRepeat);
                 randomBtn.classList.toggle('active', this.isRandom);
