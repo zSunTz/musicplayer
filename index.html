@@ -46,6 +46,17 @@
                 </div>
             </div>
 
+            <div class="song-time">
+                <div class="song-current-time">
+                    <span class="current-minute">00</span>
+                    :
+                    <span class="current-second">00</span>
+                </div>
+                <div class="song-duration">
+                    
+                </div>
+            </div>
+
             <input id="progress" class="progress" type="range" value="0" step="1" min="0" max="100">
 
             <div class="volume">
@@ -56,7 +67,7 @@
                 <input id="volumeSlider" class="volumeSlider" type="range" value="80" step="1" min="0" max="100">
             </div>
 
-            <audio id="audio" src=""></audio>
+            <audio id="audio" src="" preload="metadata"></audio>
         </div>
 
         <!-- Playlist -->
@@ -87,6 +98,8 @@
         const PLAYER_STORAGE_KEY = "F8-PLayer"
 
         const player = $('.player');
+        const songDuration = $('.song-duration');
+        const songCurrentTime = $('.song-current-time');
         const cd = $('.cd');
         const heading = $('header h2');
         const cdThumb = $('.cd-thumb');
@@ -110,6 +123,7 @@
             isSilent: false,
             isTimeUpdate: true,
             currentVolume: 0.8,
+            playedSongIndex: [],
             sliderEvent: [onchange, onmousemove],
             config: JSON.parse(localStorage.getItem(PLAYER_STORAGE_KEY)) || {},
             setConfig: function(key, value) {
@@ -254,11 +268,33 @@
                 // Khi tiến độ bài hát thay đổi
                 audio.ontimeupdate = function(e) {
                     if (audio.duration && _this.isTimeUpdate) {
+                        let minute;
+                        let second;
                         const progressPercent = Math.floor(audio.currentTime / audio.duration * 100);
                         progress.value = progressPercent;
 
                         const color = `linear-gradient(90deg, var(--primary-color) ${progress.value}%, #d6d6d6 ${progress.value}%);`;
                         progress.setAttribute('style', `background: ${color}`);
+                    
+                        if (audio.currentTime < 60) {
+                            minute = 0;
+                            second = Math.floor(audio.currentTime - minute * 60);
+                        } else {
+                            minute = Math.floor(audio.currentTime / 60);
+                            second = Math.floor(audio.currentTime - minute * 60);
+                        }
+                        
+                        const html = `
+                            <span class="current-minute">
+                                ${minute < 10 ? '0' + minute : minute}
+                            </span>
+                            :
+                            <span class="current-second">
+                                ${second < 10 ? '0' + second : second}    
+                            </span>
+                        `;
+
+                        songCurrentTime.innerHTML = html;
                     }
                 }
 
@@ -305,6 +341,11 @@
                     _this.isRandom = !_this.isRandom;
                     _this.setConfig('isRandom', _this.isRandom);
                     randomBtn.classList.toggle('active', _this.isRandom);
+                    _this.playedSongIndex.push(_this.currentIndex);
+
+                    if (!_this.isRandom) {
+                        _this.playedSongIndex = [];
+                    }
                 }
 
                 // Bật tắt repeat
@@ -384,8 +425,27 @@
                 heading.textContent = this.currentSong.name;
                 cdThumb.style.backgroundImage = `url('${this.currentSong.image}')`;
                 audio.src = this.currentSong.path;
+                this.setConfig('currentIndex', this.currentIndex);
+
+                audio.onloadedmetadata = function() {
+                    const minute = Math.floor(audio.duration / 60);
+                    const second = Math.floor(audio.duration - minute * 60);
+                    
+                    const html = `
+                        <span class="duration-minute">
+                            ${minute < 10 ? '0' + minute : minute}
+                        </span>
+                        :
+                        <span class="duartion-second">
+                            ${second}    
+                        </span>
+                    `;
+
+                    songDuration.innerHTML = html;
+                }
             },
             loadConfig: function() {
+                this.currentIndex = this.config.currentIndex || this.currentIndex;
                 this.isRandom = this.config.isRandom;
                 this.isRepeat = this.config.isRepeat;
                 this.isSilent = this.config.isSilent;
@@ -427,11 +487,17 @@
                 songList[this.currentIndex].classList.add('active');
             },
             playRandomSong: function() {
+                // Random lại playlist nếu đã nghe hết tất cả bài hát
+                if (this.playedSongIndex.length === this.songs.length) {
+                    this.playedSongIndex = [];
+                }
+
                 let newIndex;
                 do {
                     newIndex = Math.floor(Math.random() * this.songs.length);
-                } while (this.currentIndex === newIndex);
-
+                } while (this.currentIndex === newIndex || this.playedSongIndex.indexOf(newIndex) !== -1);
+                
+                this.playedSongIndex.push(newIndex);
                 this.currentIndex = newIndex;
                 this.loadCurrentSong();
             },
@@ -456,6 +522,9 @@
                 this.sliderAnimate(volumeRange);
                 repeatBtn.classList.toggle('active', this.isRepeat);
                 randomBtn.classList.toggle('active', this.isRandom);
+                if (this.isRandom) {
+                    this.playedSongIndex.push(this.currentIndex);
+                }
                 this.muteSong();
             }
         };
